@@ -1,0 +1,32 @@
+# Siempre tomar la ultima version de docker-compose en la docs 
+# https://docs.docker.com/compose/compose-file/
+
+version: "3.8"
+
+services:   # Aqui van los servicios q tenga la apk
+  frontend:
+    depends_on: 
+      - backend
+    build: ./frontend  # Indicar donde puede encontrar un DockerFile, Cada servicio debe tener un DockerFile
+    ports: # Indicar el puerto donde va a salir este servicio host:container
+      - 3000:3000
+
+  backend: 
+    depends_on: 
+      - db
+    build: ./backend
+    ports: 
+      - 3001:3001
+    environment: 
+      DB_URL: mongodb://db/vidly
+    command: ./docker-entrypoint.sh
+
+  db:
+    image: mongo:4.0-xenial
+    ports:
+      - 27017:27017
+    volumes:
+      - vidly:/data/db
+
+volumes:
+  vidly:
